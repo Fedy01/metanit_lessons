@@ -1,0 +1,41 @@
+1) Пример ER / сущностей (кратко)
+
+Restaurant (одна запись — общие данные)
+
+MenuCategory (id, name_i18n, order)
+
+MenuItem (id, name_i18n, description_i18n, price, currency, image, weight, allergens, available_flag, category, tags)
+
+Table (id, name, seats_count, location_tag)
+
+Booking (id, customer_name, phone, email, datetime_from, datetime_to, guests_count, table(FK), status, created_at, updated_at, note)
+
+SocialLink (platform, url, icon)
+
+Setting (key, value)
+
+В реализации ниже поля *_i18n реализованы как JSONField, т.к. это простой переносимый способ хранить переводы без сторонних пакетов. В проде можно заменить на django-parler / django-modeltranslation / отдельные translation tables.
+
+2) DRF: ключевые эндпоинты (предложение)
+
+GET /api/menu/ — список категорий с карточками блюд (поддержка Accept-Language)
+
+GET /api/menu/{slug}/ — detail блюда
+
+POST /api/bookings/ — создать бронь (описано выше)
+
+GET /api/tables/availability/?start=...&end=...&guests=... — проверка доступности
+
+GET /api/settings/ — публичные настройки (адрес, соцсети, карты)
+
+Swagger/OpenAPI: использовать drf-yasg или drf-spectacular
+
+3) Яндекс.Карты (интеграция)
+
+API-ключ хранить в ENV/Settings (НЕ в репо).
+
+На странице контактов вставляем Yandex Maps JS-библиотеку и инициализируем карту с маркером, передавая координаты из API /api/settings/.
+
+Сервер хранит ключ в Setting("yandex_maps_api_key") или в env YANDEX_MAPS_API_KEY.
+
+Безопасность: не публикуй публично ключи в репо. Можно ограничить ключ на домен в кабинете Яндекса.
